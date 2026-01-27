@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 
 /**
  * Redis缓存切面，防止Redis宕机影响正常业务逻辑
- * Created by macro on 2020/3/17.
  */
 @Aspect
 @Component
@@ -24,7 +23,7 @@ import java.lang.reflect.Method;
 public class RedisCacheAspect {
     private static Logger LOGGER = LoggerFactory.getLogger(RedisCacheAspect.class);
 
-    @Pointcut("execution(public * com.cbm.card.mall.service.*CacheService.*(..))")
+    @Pointcut("execution(public * com.cbm.card.mall.modules.ums.service.*CacheService.*(..))")
     public void cacheAspect() {
     }
 
