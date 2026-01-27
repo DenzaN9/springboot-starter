@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * 后台管理员管理Service
- * Created by macro on 2018/4/26.
  */
 public interface UmsAdminService extends IService<UmsAdmin> {
     /**
