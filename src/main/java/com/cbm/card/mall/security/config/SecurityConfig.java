@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * SpringSecurity 5.4.x以上新用法配置
  * 为避免循环依赖，仅用于配置HttpSecurity
- * Created by macro on 2019/11/5.
  */
 @Configuration
 public class SecurityConfig {
@@ -28,7 +27,9 @@ public class SecurityConfig {
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     @Autowired
-    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    private AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
+    @Autowired
+    private MemberJwtAuthenticationFilter memberJwtAuthenticationFilter;
     @Autowired
     private DynamicSecurityService dynamicSecurityService;
     @Autowired
@@ -46,7 +47,9 @@ public class SecurityConfig {
         registry.antMatchers(HttpMethod.OPTIONS)
                 .permitAll();
         // 任何请求需要身份认证
-        registry.and()
+        registry.antMatchers("/admin/**").authenticated()
+                .antMatchers("/member/**").authenticated()
+                .and()
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
@@ -63,7 +66,8 @@ public class SecurityConfig {
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 // 自定义权限拦截器JWT过滤器
                 .and()
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(memberJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         //有动态权限配置时添加动态权限校验过滤器
         if(dynamicSecurityService!=null){
             registry.and().addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class);

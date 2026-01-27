@@ -188,4 +188,12 @@ public class JwtTokenUtil {
         }
         return false;
     }
+
+    /**
+     * 获取tokenHead
+     * @return
+     */
+    public String getTokenHead() {
+        return tokenHead;
+    }
 }

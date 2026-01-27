@@ -105,12 +105,12 @@ public class UmsAdminController {
         return CommonResult.success(data);
     }
 
-    @ApiOperation(value = "登出功能")
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ResponseBody
-    public CommonResult logout() {
-        return CommonResult.success(null);
-    }
+//    @ApiOperation(value = "登出功能")
+//    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+//    @ResponseBody
+//    public CommonResult logout() {
+//        return CommonResult.success(null);
+//    }
 
     @ApiOperation("根据用户名或姓名分页获取用户列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)

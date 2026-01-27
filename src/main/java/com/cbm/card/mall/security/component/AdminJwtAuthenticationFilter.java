@@ -1,5 +1,6 @@
 package com.cbm.card.mall.security.component;
 
+import com.cbm.card.mall.common.service.RedisService;
 import com.cbm.card.mall.security.util.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -19,35 +21,48 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * JWT登录授权过滤器
- * Created by macro on 2018/4/26.
+ * Admin JWT登录授权过滤器
  */
-public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+@Component
+public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(AdminJwtAuthenticationFilter.class);
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private RedisService redisService;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    private static final String ADMIN_TOKEN_KEY = "mall:admin:token:";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
+        String path = request.getRequestURI();
+        if (!path.startsWith("/admin")) {
+            chain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            LOGGER.info("checking username:{}", username);
+            log.info("checking username:{}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String redisToken = (String) redisService.get(ADMIN_TOKEN_KEY + username);
+                if (!authToken.equals(redisToken)) {
+                    chain.doFilter(request, response);
+                    return;
+                }
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                 if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    LOGGER.info("authenticated user:{}", username);
+                    log.info("authenticated user:{}", username);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }

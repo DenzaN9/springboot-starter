@@ -52,3 +52,7 @@ secure:
       - /admin/register
       - /admin/info
       - /admin/logout
+      - /member/login
+      - /member/register
+      - /member/info
+      - /member/logout

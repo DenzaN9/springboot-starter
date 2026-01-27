@@ -7,6 +7,7 @@ import com.cbm.card.mall.modules.ums.model.UmsMember;
 import com.cbm.card.mall.modules.ums.service.UmsMemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 @RestController
 @Api(tags = "UmsMemberController")
+@Tag(name = "UmsMemberController",description = "前台用户管理")
 @RequestMapping("/member")
 public class UmsMemberController {
 

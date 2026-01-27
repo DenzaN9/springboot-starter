@@ -154,7 +154,15 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper,UmsAdmin> im
 
     @Override
     public String refreshToken(String oldToken) {
-        return jwtTokenUtil.refreshHeadToken(oldToken);
+        String newToken = jwtTokenUtil.refreshHeadToken(oldToken);
+        if (newToken == null) {
+            return null;
+        }
+        String token = oldToken.substring(jwtTokenUtil.getTokenHead().length());
+        String username = jwtTokenUtil.getUserNameFromToken(token);
+        String key = ADMIN_TOKEN_KEY + username;
+        redisService.set(key, newToken, jwtTokenUtil.getExpiration());
+        return newToken;
     }
 
     @Override

@@ -41,8 +41,8 @@ public class CommonSecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
-        return new JwtAuthenticationTokenFilter();
+    public AdminJwtAuthenticationFilter jwtAuthenticationTokenFilter(){
+        return new AdminJwtAuthenticationFilter();
     }
 
     @Bean
