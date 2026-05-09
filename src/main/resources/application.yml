@@ -30,8 +30,8 @@ jwt:
 redis:
   database: mall-tiny
   key:
-    admin: 'ums:admin'
-    resourceList: 'ums:resourceList'
+    admin: 'admin'
+    resourceList: 'resourceList'
   expire:
     common: 86400 # 24小时
 
@@ -50,9 +50,5 @@ secure:
       - /druid/**
       - /admin/login
       - /admin/register
-      - /admin/info
-      - /admin/logout
       - /member/login
       - /member/register
-      - /member/info
-      - /member/logout

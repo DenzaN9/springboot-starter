@@ -26,7 +26,8 @@ import java.util.Map;
  */
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
-    private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_USERNAME = "username";
+    private static final String CLAIM_KEY_USER_ID = "userId";
     private static final String CLAIM_KEY_CREATED = "created";
     @Value("${jwt.secret}")
     private String secret;
@@ -132,6 +133,20 @@ public class JwtTokenUtil {
     }
 
     /**
+     * 根据用户ID和用户名生成token
+     * @param userId
+     * @param username
+     * @return
+     */
+    public String generateToken(Long userId, String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USER_ID, String.valueOf(userId));
+        claims.put(CLAIM_KEY_USERNAME, username);
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generateToken(claims);
+    }
+
+    /**
      * 根据用户信息生成token
      */
     public String generateToken(UserDetails userDetails) {
@@ -194,5 +209,19 @@ public class JwtTokenUtil {
      */
     public String getTokenHead() {
         return tokenHead;
+    }
+
+    /**
+     * 从token中获取用户ID
+     * @param token
+     * @return
+     */
+    public Long getUserIdFromToken(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return Long.valueOf((String) claims.get(CLAIM_KEY_USER_ID));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

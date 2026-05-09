@@ -43,21 +43,24 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (!path.startsWith("/admin")) {
+        // 添加后台管理相关路径的拦截
+        if (!path.startsWith("/admin") && !path.startsWith("/card") && !path.startsWith("/role")
+                && !path.startsWith("/menu") && !path.startsWith("/resource")) {
             chain.doFilter(request, response);
             return;
         }
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
-            String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            log.info("checking username:{}", username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                String redisToken = (String) redisService.get(ADMIN_TOKEN_KEY + username);
+            Long userId = jwtTokenUtil.getUserIdFromToken(authToken);
+            log.info("checking username:{}", userId);
+            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String redisToken = (String) redisService.get(ADMIN_TOKEN_KEY + userId);
                 if (!authToken.equals(redisToken)) {
                     chain.doFilter(request, response);
                     return;
                 }
+                String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                 if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

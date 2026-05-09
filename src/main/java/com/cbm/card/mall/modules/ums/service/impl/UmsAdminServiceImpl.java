@@ -113,8 +113,10 @@ public class UmsAdminServiceImpl extends ServiceImpl<UmsAdminMapper,UmsAdmin> im
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = jwtTokenUtil.generateToken(userDetails);
-            String key = ADMIN_TOKEN_KEY + username;
+            // 获取userId，使用userId作为key存储token
+            UmsAdmin admin = getAdminByUsername(username);
+            token = jwtTokenUtil.generateToken(admin.getId(), admin.getUsername());
+            String key = ADMIN_TOKEN_KEY + admin.getId();
             redisService.set(key, token, jwtTokenUtil.getExpiration());
 //            updateLoginTimeByUsername(username);
             insertLoginLog(username);

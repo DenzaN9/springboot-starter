@@ -6,6 +6,8 @@ import com.cbm.card.mall.modules.ums.dto.UmsMemberParam;
 import com.cbm.card.mall.modules.ums.model.UmsMember;
 import com.cbm.card.mall.modules.ums.service.UmsMemberService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +37,12 @@ public class UmsMemberController {
     private String tokenHead;
 
     @ApiOperation("用户注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Idempotency-Key", value = "幂等性密钥", required = true, dataType = "String", paramType = "header")
+    })
     @PostMapping("/register")
-    public CommonResult<UmsMember> register(@Valid @RequestBody UmsMemberParam param) {
-        return CommonResult.success(memberService.register(param));
+    public CommonResult<UmsMember> register(@Valid @RequestBody UmsMemberParam param, @RequestHeader("Idempotency-Key") String idempotencyKey) {
+        return CommonResult.success(memberService.register(param, idempotencyKey));
     }
 
     @ApiOperation("用户登录")

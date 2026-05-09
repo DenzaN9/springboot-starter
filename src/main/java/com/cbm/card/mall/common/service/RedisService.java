@@ -178,4 +178,13 @@ public interface RedisService {
      * 从List结构中移除属性
      */
     Long lRemove(String key, long count, Object value);
+
+    /**
+     * 如果不存在则保存
+     * @param key
+     * @param value
+     * @param time 过期时间秒
+     * @return
+     */
+    Boolean setIfAbsent(String key, Object value, long time);
 }

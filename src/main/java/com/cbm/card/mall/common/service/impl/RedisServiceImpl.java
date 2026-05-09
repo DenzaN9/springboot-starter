@@ -195,4 +195,13 @@ public class RedisServiceImpl implements RedisService {
     public Long lRemove(String key, long count, Object value) {
         return redisTemplate.opsForList().remove(key, count, value);
     }
+
+    @Override
+    public Boolean setIfAbsent(String key, Object value, long time) {
+        Boolean success = redisTemplate.opsForValue().setIfAbsent(key, value);
+        if (Boolean.TRUE.equals(success)) {
+            redisTemplate.expire(key, time, TimeUnit.SECONDS);
+        }
+        return success;
+    }
 }

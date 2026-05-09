@@ -52,18 +52,17 @@ public class MemberJwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader(tokenHeader);
         if (StrUtil.isNotEmpty(authHeader) && authHeader.startsWith(tokenHead)) {
             String token = authHeader.substring(tokenHead.length());
-            String username = jwtTokenUtil.getUserNameFromToken(token);
-            if (StrUtil.isNotEmpty(username)
-                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Long userId = jwtTokenUtil.getUserIdFromToken(token);
+            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String redisToken =
-                        (String) redisService.get(MEMBER_TOKEN_KEY + username);
+                        (String) redisService.get(MEMBER_TOKEN_KEY + userId);
                 if (!token.equals(redisToken)) {
                     chain.doFilter(request, response);
                     return;
                 }
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                username, null, Collections.emptyList());
+                                userId, null, Collections.emptyList());
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request));

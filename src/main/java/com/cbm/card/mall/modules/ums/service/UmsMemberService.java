@@ -12,7 +12,7 @@ public interface UmsMemberService extends IService<UmsMember> {
 
     UmsMember getByUsername(String username);
 
-    UmsMember register(UmsMemberParam param);
+    UmsMember register(UmsMemberParam param, String idempotencyKey);
 
     String login(String username, String password);
 
