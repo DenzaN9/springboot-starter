@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cbm.card</groupId>
-    <artifactId>card-mall</artifactId>
+    <artifactId>springboot-starter</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>card-mall</name>
-    <description>card-mall project</description>
+    <name>springboot-starter</name>
+    <description>springboot-starter project</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: card-mall
+    name: springboot-starter
   profiles:
     active: dev
 #  main:
